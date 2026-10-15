@@ -19,7 +19,7 @@ jobs:
           git remote add origin https://github.com/git-moss/ConvertWithMoss.git
           git fetch --depth 1 origin "$CWM_COMMIT" && git checkout -q FETCH_HEAD
           mvn -B -q -DskipTests package
-          cd .. && mkdir -p tool && cp -r cwm/target/lib tool/lib && cp -r "$JAVA_HOME" tool/jdk
+          cd .. && mkdir -p tool && cp -r cwm/target/lib tool/lib && cp -rL "$JAVA_HOME" tool/jdk && ls tool/jdk/bin | head
           tar czf cwm-tool-linux.tar.gz tool && ls -la cwm-tool-linux.tar.gz
       - name: Publish
         env:
