@@ -1,0 +1,6 @@
+{
+ "_note": "Gentle tone match to the reference banjo videos (half of the measured difference, limited to +1 / -3 dB, low end ignored because the references contain backing music).",
+ "0": 0.0, "160": 0.5, "202": 1.0, "254": 1.0, "320": 1.0, "403": 0.8, "508": 0.0, "640": -0.3, "806": 0.5,
+ "1016": 0.0, "1280": -2.5, "1613": -3.0, "2032": -3.0, "2560": -3.0, "3225": -2.5, "4064": -0.8, "5120": 0.0,
+ "6451": -1.0, "8127": -1.0, "10240": -0.5, "22050": -0.5
+}

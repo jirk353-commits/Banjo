@@ -1,0 +1,39 @@
+ROHIT JI BANJO  -  Indian banjo sample library
+=============================================
+
+FOLDERS
+  Kontakt/          3 Kontakt instruments (.nki) + their sample folders
+  Decent Sampler/   the same 3 instruments for the free Decent Sampler plugin
+  SFZ/              the same instruments as SFZ (sforzando, TX16Wx, ...)
+  Demo/             demo audio: scale, short tune and a check of every sampled note
+
+INSTRUMENTS (load only the one you need)
+  ROHIT JI Banjo - Tremolo        Tremolo notes that keep playing while you hold the key.
+                                  Range C4 to C6. C = C (in tune, A = 440 Hz).
+  ROHIT JI Banjo - Tremolo Short  Same notes, short and plucky, die away by themselves.
+  ROHIT JI Banjo - Phrases        Your full recorded phrases, one per white key from C3
+                                  (C3, D3, E3, F3, G3, A3, B3, C4, D4). They play at their
+                                  own pitch on any key.
+
+KONTAKT
+  1. Unzip the whole folder somewhere permanent (e.g. Documents\ROHIT JI Banjo).
+  2. In Kontakt open the "Files" tab (or drag the .nki file into the rack).
+  3. Load "ROHIT JI Banjo - Tremolo.nki" (or one of the others).
+  Keep each .nki next to its "... Samples" folder, otherwise Kontakt asks for the samples.
+  In the free Kontakt Player non-encoded libraries run in 15-minute demo mode; full Kontakt is fine.
+
+KEYS
+  Lowest key C4, highest key C6. Velocity controls loudness.
+  The Tremolo instruments switch between up to 3 different takes of the same note
+  (round robin) in Decent Sampler and SFZ, so repeated notes don't sound robotic.
+
+WHAT WAS DONE TO THE RECORDINGS
+  - 50 Hz electrical hum and its harmonics removed, rumble below 190 Hz removed
+  - background hiss reduced (about 30 dB quieter between notes)
+  - gentle tone match to the reference banjo videos (a little warmer, less harsh at 1-3 kHz)
+  - every note tuned to the exact pitch (A = 440 Hz), levels matched
+  - smooth sustain loop added so held notes keep the tremolo going
+
+MORE NOTES
+  Record more single tremolo notes (one long note per file, no ornament) and put them in
+  the GitHub repo folder "raw/". GitHub rebuilds the whole library automatically.

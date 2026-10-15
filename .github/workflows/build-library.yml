@@ -1,0 +1,81 @@
+name: Build ROHIT JI Banjo library (Kontakt + Decent Sampler + SFZ)
+
+on:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  LIB: "ROHIT JI Banjo"
+  CWM_COMMIT: 38cdb927c37a790a26b6e7d3cc696afa38012037   # ConvertWithMoss (SFZ -> Kontakt NKI / Decent Sampler)
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Clean, tune and map the samples
+        run: |
+          pip install numpy scipy
+          python tools/build.py build
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "25"
+          cache: maven
+
+      - name: Build ConvertWithMoss
+        run: |
+          git init cwm && cd cwm
+          git remote add origin https://github.com/git-moss/ConvertWithMoss.git
+          git fetch --depth 1 origin "$CWM_COMMIT" && git checkout -q FETCH_HEAD
+          mvn -B -q -DskipTests package
+          ls target/lib | head -50
+
+      - name: Convert to Kontakt and Decent Sampler
+        run: |
+          JAR=$(ls cwm/target/lib/convertwithmoss*.jar | head -1)
+          mkdir -p out/Kontakt out/DecentSampler
+          java -Djava.awt.headless=true -jar "$JAR" -s sfz -d nki build/for_kontakt out/Kontakt
+          java -Djava.awt.headless=true -jar "$JAR" -s sfz -d decentsampler build/SFZ out/DecentSampler
+          echo "--- Kontakt"; find out/Kontakt | sort | head -80
+          echo "--- Decent Sampler"; find out/DecentSampler | sort | head -80
+          test "$(ls out/Kontakt/*.nki | wc -l)" -eq 3
+          test "$(ls out/DecentSampler/*.dspreset | wc -l)" -eq 3
+
+      - name: Package
+        run: |
+          D="dist/$LIB"
+          mkdir -p "$D"
+          cp -r out/Kontakt "$D/Kontakt"
+          cp -r out/DecentSampler "$D/Decent Sampler"
+          cp -r build/SFZ "$D/SFZ"
+          cp -r build/Demo "$D/Demo"
+          cp build/build-report.txt "$D/"
+          cp "docs/HOW TO USE.txt" "$D/"
+          cd dist && zip -qr "../ROHIT-JI-Banjo-Library.zip" "$LIB"
+          cd .. && ls -la ROHIT-JI-Banjo-Library.zip
+
+      - uses: actions/upload-artifact@v5
+        with:
+          name: ROHIT-JI-Banjo-Library
+          path: ROHIT-JI-Banjo-Library.zip
+
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for t in $(gh release list --limit 50 --json tagName -q '.[].tagName'); do gh release delete "$t" --yes --cleanup-tag; done
+          cp "build/Demo/Demo - short tune.wav" Banjo-Demo-Tune.wav
+          gh release create v1.0.0 ROHIT-JI-Banjo-Library.zip Banjo-Demo-Tune.wav \
+            --title "ROHIT JI Banjo v1.0.0 (Kontakt + Decent Sampler + SFZ)" --latest \
+            --notes "Download **ROHIT-JI-Banjo-Library.zip**, unzip it and open the Kontakt folder in Kontakt (Files tab), then load one of the three instruments: **Tremolo** (sustain), **Tremolo Short** or **Phrases**. Read *HOW TO USE.txt* inside the zip."
